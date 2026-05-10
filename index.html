@@ -40,48 +40,47 @@
 
     <p class="error" id="error"></p>
 
-    <div class="response" id="response">
+    <div class="response" id="responseBox">
       <div class="response-label">⚡ Tough Love Jesus says:</div>
-      <div class="response-text" id="response-text"></div>
+      <div class="response-text" id="responseText"></div>
     </div>
   </div>
 
   <script>
     async function askJesus() {
-      const problem = document.getElementById('problem').value.trim();
+      var problem = document.getElementById('problem').value.trim();
       if (!problem) return;
 
-      const btn = document.getElementById('btn');
-      const error = document.getElementById('error');
-      const response = document.getElementById('response');
-      const responseText = document.getElementById('response-text');
+      var btn = document.getElementById('btn');
+      var errorEl = document.getElementById('error');
+      var responseBox = document.getElementById('responseBox');
+      var responseText = document.getElementById('responseText');
 
       btn.disabled = true;
       btn.textContent = 'He is reading your message and sighing heavily...';
-      error.classList.remove('visible');
-      response.classList.remove('visible');
+      errorEl.classList.remove('visible');
+      responseBox.classList.remove('visible');
 
       try {
-        const res = await fetch('/api/ask', {
+        var res = await fetch('/api/ask', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ problem })
+          body: JSON.stringify({ problem: problem })
         });
-        const data = await res.json();
+        var data = await res.json();
         if (data.error) throw new Error(data.error);
         responseText.textContent = data.response;
-        response.classList.add('visible');
+        responseBox.classList.add('visible');
       } catch (e) {
-        const errData = await response.json().catch(() => ({}));
-        error.textContent = errData.error || 'Something went sideways. Try again.';
-        error.classList.add('visible');
+        errorEl.textContent = 'Error: ' + e.message;
+        errorEl.classList.add('visible');
       } finally {
         btn.disabled = false;
         btn.textContent = 'Seek Guidance ✝';
       }
     }
 
-    document.getElementById('problem').addEventListener('keydown', e => {
+    document.getElementById('problem').addEventListener('keydown', function(e) {
       if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) askJesus();
     });
   </script>
