@@ -27,9 +27,8 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    console.log("Anthropic response status:", response.status);
-    console.log("Anthropic response body:", JSON.stringify(data));
-    if (data.error) return res.status(500).json({ error: data.error.message });
+    if (data.error) return res.status(500).json({ error: data.error.message, type: data.error.type, status: response.status });
+    if (!data.content) return res.status(500).json({ error: "Unexpected response", raw: JSON.stringify(data) });
 
     const text = data.content?.find(b => b.type === "text")?.text || "";
     res.status(200).json({ response: text });
