@@ -72,7 +72,7 @@
         responseText.textContent = data.response;
         response.classList.add('visible');
       } catch (e) {
-        const errData = await res.json().catch(() => ({}));
+        const errData = await response.json().catch(() => ({}));
         error.textContent = errData.error || 'Something went sideways. Try again.';
         error.classList.add('visible');
       } finally {
